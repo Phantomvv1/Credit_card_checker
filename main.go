@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 )
 
 func sumDigits(number int) int {
@@ -36,6 +38,18 @@ func luhnAlogorithm(number int) bool {
 }
 
 func main() {
-	fmt.Println(luhnAlogorithm(17893729974))
-	fmt.Println("In order to del the master branch")
+	resultMap := map[string]bool{
+		"resultValue": luhnAlogorithm(17893729974),
+	}
+	jsonData, err := json.Marshal(resultMap)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(jsonData))
+
+	err = json.Unmarshal(jsonData, &resultMap)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(resultMap["resultValue"])
 }
