@@ -37,4 +37,5 @@ func luhnAlogorithm(number int) bool {
 
 func main() {
 	fmt.Println(luhnAlogorithm(17893729974))
+	fmt.Println("In order to del the master branch")
 }
