@@ -16,17 +16,12 @@
                 let inputValue = inputElement.value;
                 console.log(inputValue);
 
-                fetch("http://localhost:42069/validate", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ number: inputValue })
+                fetch("http://localhost:42069/validate?number=${inputValue}", {
+                method: "GET",
             })
-            .then(response => response.json())  // Assuming the server responds with JSON
+            .then(response => response.json())
             .then(data => {
-                // Display the response in the paragraph
-                document.getElementById("response").innerText = data.message;
+                document.getElementById("response").innerText = data.resultValue;
             })
             .catch(error => console.error("Error:", error));
             }
