@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Credit card validator</h1>
+    <input type="text" placeholder="Enter a number" id="input">
+    <script>
+        let inputElement = document.getElementById("input");
+
+        inputElement.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                let inputValue = inputElement.value;
+                console.log(inputValue);
+
+                fetch("http://localhost:42069/validate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ number: inputValue })
+            })
+            .then(response => response.json())  // Assuming the server responds with JSON
+            .then(data => {
+                // Display the response in the paragraph
+                document.getElementById("response").innerText = data.message;
+            })
+            .catch(error => console.error("Error:", error));
+            }
+        });
+    </script>
+</body>
+</html>
