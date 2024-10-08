@@ -8,6 +8,7 @@
 <body>
     <h1>Credit card validator</h1>
     <input type="text" placeholder="Enter a number" id="input">
+    <p id="response"></p>
     <script>
         let inputElement = document.getElementById("input");
 
@@ -16,12 +17,17 @@
                 let inputValue = inputElement.value;
                 console.log(inputValue);
 
-                fetch("http://localhost:42069/validate?number=${inputValue}", {
+                fetch(`http://localhost:42069/validator?number=${inputValue}`, {
                 method: "GET",
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("response").innerText = data.resultValue;
+                if (data.resultValue == true){
+                    document.getElementById("response").innerText = "That is a valid credit card number";
+                } else {
+                    document.getElementById("response").innerText = "That is not a valid credit card number";
+                }
+                
             })
             .catch(error => console.error("Error:", error));
             }

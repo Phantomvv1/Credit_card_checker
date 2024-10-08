@@ -2,9 +2,39 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"net/http"
+	"strconv"
 )
+
+type Result struct {
+	Value bool `json:"resultValue"`
+}
+
+func validate(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	var result Result
+	credCardNum := r.URL.Query().Get("number")
+	num, err := strconv.Atoi(credCardNum)
+	if err != nil {
+		log.Fatal(err)
+	}
+	result.Value = luhnAlogorithm(num)
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(result)
+}
 
 func sumDigits(number int) int {
 	if number <= 9 {
@@ -38,18 +68,13 @@ func luhnAlogorithm(number int) bool {
 }
 
 func main() {
-	resultMap := map[string]bool{
-		"resultValue": luhnAlogorithm(17893729974),
-	}
-	jsonData, err := json.Marshal(resultMap)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(string(jsonData))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/validator", validate)
 
-	err = json.Unmarshal(jsonData, &resultMap)
-	if err != nil {
+	err := http.ListenAndServe(":42069", mux)
+	if errors.Is(err, http.ErrServerClosed) {
+		fmt.Println("Couldn't open server")
+	} else if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(resultMap["resultValue"])
 }
